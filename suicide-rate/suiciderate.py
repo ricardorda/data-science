@@ -41,49 +41,81 @@ df['age'] = pd.Categorical(df['age'] )
 
 
 suicidiosPorAno = df.groupby(['year','age'])['suicides_no','suicides_100k'].sum().reset_index().sort_values(by='year')
-print(suicidiosPorAno.head())
-
-#suicidiosPorAno.plot(x='age',y='suicides_no')
-#plt.show()
 
 fig, ax = plt.subplots(figsize=(16,7))
 
 for key, grp in suicidiosPorAno.groupby(['age']):
-    ax = grp.plot(ax=ax, x='year', y='suicides_no', label=key, grid=True)
+    ax = grp.plot(ax=ax, x='year', y='suicides_no', label=key , grid=True)
 
-plt.legend(loc='best')
+plt.ylabel('suicides_no') 
+plt.title('Suicidios por Ano') 
 plt.show()
 
-#suicidiosPorAno.plot(x='year', y='suicides_no', title='Quantidade de Suicidio/100k Por Ano', grid=True)
-
-#plt.plot()
-
-'''
-df.corr(method='spearman').to_excel('spearman.xlsx')
-df.corr().to_excel('pearson.xlsx')
-
-print(df.info())
-print(df.head())
 
 
 plt.figure(figsize=(16,7))
-
-cor = sns.heatmap(df.corr(), annot = True)
+sns.heatmap(df.corr(), annot = True)
 plt.show()
-#plt.clf()
 
 
-suicidioPorGdpPerCapita = df.groupby(['gdp_per_capita'])['suicides_no','suicides_100k'].sum()
-suicidioPorGdpPerCapita = suicidioPorGdpPerCapita.reset_index().sort_values(by='gdp_per_capita')
+suicidioPorGdpPerCapita = df.groupby(['gdp_per_capita'])['suicides_no','suicides_100k'].sum().reset_index().sort_values(by='gdp_per_capita')
 
-plt.scatter(x=suicidioPorGdpPerCapita['gdp_per_capita'], y=suicidioPorGdpPerCapita['suicides_no'], alpha=0.5)
+plt.figure(figsize=(16,7))
+plt.scatter(data=suicidioPorGdpPerCapita, x='gdp_per_capita',y='suicides_no',alpha=0.5)
 plt.xlabel('gdp_per_capita')
 plt.ylabel('suicides_no')
-plt.title('Suicidios por gdp_per_capita')
+plt.title('Suicidios Por GDP Per Capita')
 plt.show()
 
-suicidiosPorPais = df.groupby(['country', 'sex'])['suicides_no','suicides_100k'].sum().reset_index()
-print(suicidiosPorPais.head())
+
+
+suicidiosPorPais = df.groupby(['country'])['suicides_no','suicides_100k'].sum().reset_index()
+suicidiosPorPaisTotal = suicidiosPorPais.sort_values(by='suicides_no', ascending=False)[:10]
+suicidiosPorPais100k = suicidiosPorPais.sort_values(by='suicides_100k', ascending=False)[:10]
+
+suicidiosPorPaisTotal.plot.bar(x='country',y='suicides_no',rot=45, figsize=(16,7))
+plt.ylabel('suicides_no')
+
+suicidiosPorPais100k.plot.bar(x='country',y='suicides_100k',rot=45, figsize=(16,7))
+plt.ylabel('suicides/100k')
+
+
+brazil = df[df['country'] == 'Brazil']
+suicidiosBrazil = brazil.groupby(['year','age'])['suicides_no','suicides_100k'].sum().reset_index().sort_values(by='year')
+
+fig, ax = plt.subplots(figsize=(16,7))
+
+for key, grp in suicidiosBrazil.groupby(['age']):
+    ax = grp.plot(ax=ax, x='year', y='suicides_no', label=key , grid=True)
+
+plt.ylabel('suicides_no') 
+plt.title('Suicidios Por Ano No Brazil') 
+plt.show()
+
+
+'''
+pais15 = suicidiosPorPais[:5]
+#.sort_values(by='suicides_100k', ascending=False)
+print(pais15)
+print('====')
+for key, grp in pais15.groupby('sex'):
+    print(key)
+    print(grp)
+  '''  
+
+'''
+fig, ax = plt.subplots(figsize=(16,7))
+
+for key, grp in suicidiosPorPais.groupby(['sex']):
+    ax = grp.plot(ax=ax, x='country', y='suicides_no', label=key , grid=True, kind='bar')
+
+plt.ylabel('suicides_no') 
+plt.title('Suicidios por Ano') 
+plt.show()
+'''
+
+'''
+
 
 
 suicidiosPorIdade = df.groupby(['country', 'age'])['suicides_no','suicides_100k'].sum().reset_index()
@@ -98,6 +130,13 @@ print(suicidiosPorIdade.head())
 
 
 '''
+df.corr(method='spearman').to_excel('spearman.xlsx')
+df.corr().to_excel('pearson.xlsx')
+
+print(df.info())
+print(df.head())
+
+
 print("suicides_no = ", round( scipy.stats.kurtosis(df['suicides_no']),5) )
 print("population = ", round( scipy.stats.kurtosis(df['population']),5))
 print("suicides_100k = ", round( scipy.stats.kurtosis(df['suicides_100k']),5))
@@ -118,6 +157,10 @@ print(df.info())
 print('============================')
 print(df.head(15))
 print('============================')
+
+#suicidiosPorAno.plot(x='year', y='suicides_no', title='Quantidade de Suicidio/100k Por Ano', grid=True)
+
+#plt.plot()
 '''
 
 #print('============================')
