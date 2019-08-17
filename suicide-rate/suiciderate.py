@@ -53,6 +53,20 @@ plt.show()
 
 
 
+
+suicidiosPorSexo = df.groupby(['year','sex'])['suicides_no','suicides_100k'].sum().reset_index().sort_values(by='year')
+
+fig, ax = plt.subplots(figsize=(16,7))
+
+for key, grp in suicidiosPorSexo.groupby(['sex']):
+    ax = grp.plot(ax=ax, x='year', y='suicides_no', label=key , grid=True)
+
+plt.ylabel('suicides_no') 
+plt.title('Suicidios por Ano e Sexo') 
+plt.show()
+
+
+
 plt.figure(figsize=(16,7))
 sns.heatmap(df.corr(), annot = True)
 plt.show()
@@ -89,7 +103,19 @@ for key, grp in suicidiosBrazil.groupby(['age']):
     ax = grp.plot(ax=ax, x='year', y='suicides_no', label=key , grid=True)
 
 plt.ylabel('suicides_no') 
-plt.title('Suicidios Por Ano No Brazil') 
+plt.title('Suicidios Por Ano e Idade No Brasil') 
+plt.show()
+
+
+suicidiosPorSexoBrazil = brazil.groupby(['year','sex'])['suicides_no','suicides_100k'].sum().reset_index().sort_values(by='year')
+
+fig, ax = plt.subplots(figsize=(16,7))
+
+for key, grp in suicidiosPorSexoBrazil.groupby(['sex']):
+    ax = grp.plot(ax=ax, x='year', y='suicides_no', label=key , grid=True)
+
+plt.ylabel('suicides_no') 
+plt.title('Suicidios Por Ano e Sexo no Brasil') 
 plt.show()
 
 
