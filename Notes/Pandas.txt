@@ -1,4 +1,6 @@
-
+cor = sns.heatmap(dataset.corr(), annot = True)
+plt.figure(figsize=(16,7))
+cor = sns.heatmap(dataset.corr(), annot = True)
 Principles of tidy data
  - Columns represent separate variables
  - Rows represent individual observations

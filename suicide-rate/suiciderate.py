@@ -8,6 +8,7 @@ import scipy.stats
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.max_rows', 500)
@@ -39,6 +40,24 @@ df['sex'] = pd.Categorical(df['sex'] )
 df['age'] = pd.Categorical(df['age'] )
 
 
+suicidiosPorAno = df.groupby(['year','age'])['suicides_no','suicides_100k'].sum().reset_index().sort_values(by='year')
+print(suicidiosPorAno.head())
+
+#suicidiosPorAno.plot(x='age',y='suicides_no')
+#plt.show()
+
+fig, ax = plt.subplots(figsize=(16,7))
+
+for key, grp in suicidiosPorAno.groupby(['age']):
+    ax = grp.plot(ax=ax, x='year', y='suicides_no', label=key, grid=True)
+
+plt.legend(loc='best')
+plt.show()
+
+#suicidiosPorAno.plot(x='year', y='suicides_no', title='Quantidade de Suicidio/100k Por Ano', grid=True)
+
+#plt.plot()
+
 '''
 df.corr(method='spearman').to_excel('spearman.xlsx')
 df.corr().to_excel('pearson.xlsx')
@@ -46,35 +65,39 @@ df.corr().to_excel('pearson.xlsx')
 print(df.info())
 print(df.head())
 
-'''
-suicidiosPorAno = df.groupby('year')['suicides_no','suicides_100k'].sum()
 
-fig = plt.figure(figsize=(15,6))
-#suicidiosPorAno.plot(title='Quantidade de Suicidio/100k Por Ano', grid=True)
+plt.figure(figsize=(16,7))
 
+cor = sns.heatmap(df.corr(), annot = True)
+plt.show()
 #plt.clf()
-'''
-suicidioPorGdpPerCapita.reset_index().sort_values(by='gdp_per_capita')
-print(suicidioPorGdpPerCapita )
-plt.scatter(x=suicidioPorGdpPerCapita['gdp_per_capita'], y=suicidioPorGdpPerCapita['suicides_no'])
-'''
+
 
 suicidioPorGdpPerCapita = df.groupby(['gdp_per_capita'])['suicides_no','suicides_100k'].sum()
 suicidioPorGdpPerCapita = suicidioPorGdpPerCapita.reset_index().sort_values(by='gdp_per_capita')
-print(suicidioPorGdpPerCapita.head(5))
-plt.scatter(x=suicidioPorGdpPerCapita['gdp_per_capita'], y=suicidioPorGdpPerCapita['suicides_no'])
+
+plt.scatter(x=suicidioPorGdpPerCapita['gdp_per_capita'], y=suicidioPorGdpPerCapita['suicides_no'], alpha=0.5)
 plt.xlabel('gdp_per_capita')
 plt.ylabel('suicides_no')
 plt.title('Suicidios por gdp_per_capita')
 plt.show()
 
-'''geracao = df.groupby(['year'])['generation','suicides_no']
+suicidiosPorPais = df.groupby(['country', 'sex'])['suicides_no','suicides_100k'].sum().reset_index()
+print(suicidiosPorPais.head())
 
-geracao.plot.bar()
-print(geracao.head(10))
-'''
+
+suicidiosPorIdade = df.groupby(['country', 'age'])['suicides_no','suicides_100k'].sum().reset_index()
+print(suicidiosPorIdade.head())
 '''
 
+
+#Paises Total 
+#Paises 100k
+#Brasil por idade
+
+
+
+'''
 print("suicides_no = ", round( scipy.stats.kurtosis(df['suicides_no']),5) )
 print("population = ", round( scipy.stats.kurtosis(df['population']),5))
 print("suicides_100k = ", round( scipy.stats.kurtosis(df['suicides_100k']),5))
@@ -87,8 +110,6 @@ print("population = ", round( scipy.stats.skew(df['population']),5))
 print("suicides_100k = ", round( scipy.stats.skew(df['suicides_100k']),5))
 print("gdp_per_capita = ", round( scipy.stats.skew(df['gdp_per_capita']),5))
 print("gdp_for_year = ", round( scipy.stats.skew(df['gdp_for_year']),5))
-
-
 
 
 print(df.columns)
