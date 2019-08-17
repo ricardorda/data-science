@@ -1,0 +1,125 @@
+
+Principles of tidy data
+ - Columns represent separate variables
+ - Rows represent individual observations
+ - Observational units form tables
+
+
+==> Libraries
+- glob
+- map(funcao, lista)
+Aplica a função especificada em todos os elementos da lista informada
+
+
+==> Pandas
+- df.resample
+- df.rolling
+Rolling means (or moving averages) are generally used to smooth out short-term fluctuations in time series data and highlight long-term trends. You can read more about them here.
+- df.set_index()
+- df.reset_index()
+- pd.pivot_table
+- pd.to_datetime
+- pd.to_numeric
+- pd.pivot
+- pd.melt
+- pd.concat
+- pd.merge
+- df.drop_duplicates()
+- df.drop_na()
+- df.coluna.apply(funcao)
+Aplica a funcao nos elementos da coluna, para o index precisa ser a .map().
+- df.value_counts
+- df.columnname.fillna(default value)
+- df.reindex(df2.index)
+- 
+
+==> MANIPULATING DATAFRAMES WITH PANDAS 
+
+-->  Vectorized Functions
+Melhor que .map e .apply, porque percorre todos os dados ao mesmo tempo, igual C, fortran, etc.
+-  zscore (scipy.stats) 
+Is the number of standard deviations by which an observation is above the mean - so if it is negative, it means the observation is below the mean.
+
+
+=> Pandas Data Structure
+- Indexes: Sequence of labels, they are Immutable
+- Series: 1D array with Index
+- DataFrames: 2D array with Series as columns
+
+==> MultiIndex: (Não funciona com .pivot)
+Mais de uma coluna pode ser usada como index. Ex: dataframe.set_index(['coluna1', 'coluna2'])
+Para selecionar:
+- dataframe.loc[('index primario', 'index secundário'), 'coluna selecionada']
+Para selecionar um range de index primario:
+- dataframe.loc[(['index primario','index primario 2'], 'index secundário'), 'coluna selecionada']
+Para selecionar a partir do index secundário:
+- dataframe.loc[(slice(None), 'index secundário'), 'coluna selecionada']
+
+
+-> df.stack 
+Aparentemente adiciona no multindex. Sintax: dataframe.stack(level='nome coluna ou index')
+
+-> df.unstack:
+Aparentemente remove do multindex. Sintax: dataframe.unstack(level='nome coluna OU index')
+
+-> df.swaplevel(0,1): 
+Troca o level do multindex
+
+-> dataframe.sort_index()
+
+
+==> Melting
+Converte as colunas em linhas de uma coluna. Essa coluna pode ter o nome customizado.
+Sintax: pd.melt(dataframe, id_vars=['colunas a serem mantidas'], value_vars=['colunas de valores'], var_name='nome customizado da coluna de atributo', value_name='nome customizado 
+da coluna de valor')
+
+
+==> Pivot
+Converte os valores das linhas em colunas. 
+Existe pivot e pivot_table. Pivot não permite linhas duplicadas, pivot_table permite e aplica por default a média nesses registros.
+
+
+dataframe.pivot_table(index='', columns='', values='', aggfunc='', margins=True)
+
+
+==> GroupBy
+- dataframe.groupby('coluna')['coluna para somar'].sum()
+Também é possível fazer multiple aggregation
+- dataframe.groupby(coluna1)[coluna2, coluna3].agg(['sum','count','mean'])
+Pode-se também aplicar uma função diferente para cada coluna
+- dataframe.groupby(coluna1)[coluna2, coluna3].agg(['coluna2':'count','coluna3':'mean'])
+
+
+
+==> .TRANSFORM() method after grouping to apply a function to groups of data independently.
+
+
+==> dataframe.idxmax(): Retorna a linha do dataframe que possui o maior valor. Pode ser usado para colunas com dataframe.idxmax(axis='columns')
+==> dataframe.idxmin(): Retorna a linha do dataframe que possui o menor valor. Pode ser usado para colunas com dataframe.idxmin(axis='columns')
+
+
+
+
+
+
+
+====>> PLOT
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
