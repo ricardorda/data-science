@@ -9,6 +9,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.preprocessing import minmax_scale
+from sklearn.preprocessing import scale
+from sklearn import preprocessing
 
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.max_rows', 500)
@@ -35,11 +38,48 @@ df.drop(['country_year','HDI_for_year'], axis=1, inplace=True)
 
 df = df[df['year'] != 2016]
 
-df['generation'] = pd.Categorical(df['generation'] )
-df['sex'] = pd.Categorical(df['sex'] )
-df['age'] = pd.Categorical(df['age'] )
+df['generation'] = pd.Categorical(df['generation'])
+df['sex'] = pd.Categorical(df['sex'])
+df['age'] = pd.Categorical(df['age'])
 
 
+
+'''
+#Normalização mín-máx
+colunas = ['suicides_no','population','suicides_100k','gdp_for_year','gdp_per_capita']
+dfMinMax = df.copy()
+dfMinMax[colunas] = dfMinMax[colunas].apply(minmax_scale)
+dfMinMax.to_csv('suicide-rate-min-max.csv')
+'''
+
+#Normalizacao desvio padrao
+#
+colunas = ['suicides_no','population','suicides_100k','gdp_per_capita','gdp_for_year']
+dfDesvio = df.copy()
+scaler = preprocessing.StandardScaler()
+scaled_df = scaler.fit_transform(dfDesvio[colunas])
+dfDesvio[colunas] = scaled_df
+dfDesvio.to_csv('scaled_df.csv')
+print(dfDesvio.head())
+
+'''
+
+bla = dfDesvio[colunas].apply(preprocessing.StandardScaler)
+print(bla.head())
+names = dfDesvio.columns
+scaler = preprocessing.StandardScaler()
+scaled_df = scaler.fit_transform(dfDesvio[colunas])
+print(scaled_df)
+scaled_df = pd.DataFrame(scaled_df, columns=colunas)
+scaled_df.to_csv('scaled_df.csv')
+print(scaled_df.head())
+'''
+#dfDesvio[colunas] = dfDesvio[colunas].apply(scale)
+#print(dfDesvio.head())
+#print(df.head())
+
+
+'''
 suicidiosPorAno = df.groupby(['year','age'])['suicides_no','suicides_100k'].sum().reset_index().sort_values(by='year')
 
 fig, ax = plt.subplots(figsize=(16,7))
@@ -67,9 +107,12 @@ plt.show()
 
 
 
+
 plt.figure(figsize=(16,7))
 sns.heatmap(df.corr(), annot = True)
 plt.show()
+
+
 
 
 suicidioPorGdpPerCapita = df.groupby(['gdp_per_capita'])['suicides_no','suicides_100k'].sum().reset_index().sort_values(by='gdp_per_capita')
@@ -83,6 +126,7 @@ plt.show()
 
 
 
+
 suicidiosPorPais = df.groupby(['country'])['suicides_no','suicides_100k'].sum().reset_index()
 suicidiosPorPaisTotal = suicidiosPorPais.sort_values(by='suicides_no', ascending=False)[:10]
 suicidiosPorPais100k = suicidiosPorPais.sort_values(by='suicides_100k', ascending=False)[:10]
@@ -92,6 +136,8 @@ plt.ylabel('suicides_no')
 
 suicidiosPorPais100k.plot.bar(x='country',y='suicides_100k',rot=45, figsize=(16,7))
 plt.ylabel('suicides/100k')
+
+
 
 
 brazil = df[df['country'] == 'Brazil']
@@ -107,6 +153,8 @@ plt.title('Suicidios Por Ano e Idade No Brasil')
 plt.show()
 
 
+
+
 suicidiosPorSexoBrazil = brazil.groupby(['year','sex'])['suicides_no','suicides_100k'].sum().reset_index().sort_values(by='year')
 
 fig, ax = plt.subplots(figsize=(16,7))
@@ -117,7 +165,7 @@ for key, grp in suicidiosPorSexoBrazil.groupby(['sex']):
 plt.ylabel('suicides_no') 
 plt.title('Suicidios Por Ano e Sexo no Brasil') 
 plt.show()
-
+'''
 
 '''
 pais15 = suicidiosPorPais[:5]
@@ -127,9 +175,7 @@ print('====')
 for key, grp in pais15.groupby('sex'):
     print(key)
     print(grp)
-  '''  
 
-'''
 fig, ax = plt.subplots(figsize=(16,7))
 
 for key, grp in suicidiosPorPais.groupby(['sex']):
@@ -138,24 +184,11 @@ for key, grp in suicidiosPorPais.groupby(['sex']):
 plt.ylabel('suicides_no') 
 plt.title('Suicidios por Ano') 
 plt.show()
-'''
-
-'''
-
 
 
 suicidiosPorIdade = df.groupby(['country', 'age'])['suicides_no','suicides_100k'].sum().reset_index()
 print(suicidiosPorIdade.head())
-'''
 
-
-#Paises Total 
-#Paises 100k
-#Brasil por idade
-
-
-
-'''
 df.corr(method='spearman').to_excel('spearman.xlsx')
 df.corr().to_excel('pearson.xlsx')
 
