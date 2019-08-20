@@ -12,6 +12,8 @@ import seaborn as sns
 from sklearn.preprocessing import minmax_scale
 from sklearn.preprocessing import scale
 from sklearn import preprocessing
+from scipy import stats
+import numpy as np
 
 pd.set_option('display.max_columns', 500)
 pd.set_option('display.max_rows', 500)
@@ -22,7 +24,6 @@ def ConverterParaFloat(valor):
         valor = float( valor.replace(",","") )
     except:
         valor = np.NaN
-
     return valor
 
 
@@ -34,7 +35,7 @@ df = pd.read_csv('suiciderate.csv',
 
 df['gdp_for_year'] = df['gdp_for_year'].apply(ConverterParaFloat)
 
-df.drop(['country_year','HDI_for_year'], axis=1, inplace=True)
+#df.drop(['country_year','HDI_for_year'], axis=1, inplace=True)
 
 df = df[df['year'] != 2016]
 
@@ -42,42 +43,48 @@ df['generation'] = pd.Categorical(df['generation'])
 df['sex'] = pd.Categorical(df['sex'])
 df['age'] = pd.Categorical(df['age'])
 
-
-
 '''
 #Normalização mín-máx
 colunas = ['suicides_no','population','suicides_100k','gdp_for_year','gdp_per_capita']
 dfMinMax = df.copy()
 dfMinMax[colunas] = dfMinMax[colunas].apply(minmax_scale)
-dfMinMax.to_csv('suicide-rate-min-max.csv')
-'''
+dfMinMax.to_excel('suicide-rate-min-max.xlsx')
+print(dfMinMax.head())
 
-#Normalizacao desvio padrao
-#
+#Normalizacao pelo desvio padrao
 colunas = ['suicides_no','population','suicides_100k','gdp_per_capita','gdp_for_year']
 dfDesvio = df.copy()
 scaler = preprocessing.StandardScaler()
 scaled_df = scaler.fit_transform(dfDesvio[colunas])
 dfDesvio[colunas] = scaled_df
-dfDesvio.to_csv('scaled_df.csv')
+dfDesvio.to_excel('suicide-rate-standard.xlsx')
 print(dfDesvio.head())
+'''
+'''
+# Trabalhando com os valores faltantes
+print(df['HDI_for_year'].describe())
+# mean 0.776601
+# std 0.093367
+df['HDI_for_year'].fillna((df['HDI_for_year'].mean()), inplace=True)
+print(df['HDI_for_year'].describe())
+# mean 0.776601
+# std 0.051340
+'''
+# Mantendo o desvio padrão constante
+print(df['HDI_for_year'].std())
+df['HDI_for_year'].fillna(0.94639, inplace=True)
+print(df['HDI_for_year'].std())
 
 '''
+# Encontrando os outliers
+print(df['suicides_no'].describe())
+z = np.abs(stats.zscore(df['suicides_no']))
+outliers = df[z > 3]
+print(outliers.count())
 
-bla = dfDesvio[colunas].apply(preprocessing.StandardScaler)
-print(bla.head())
-names = dfDesvio.columns
-scaler = preprocessing.StandardScaler()
-scaled_df = scaler.fit_transform(dfDesvio[colunas])
-print(scaled_df)
-scaled_df = pd.DataFrame(scaled_df, columns=colunas)
-scaled_df.to_csv('scaled_df.csv')
-print(scaled_df.head())
+dfSemOutlier = df[z < 3]
+print(dfSemOutlier['suicides_no'].describe())
 '''
-#dfDesvio[colunas] = dfDesvio[colunas].apply(scale)
-#print(dfDesvio.head())
-#print(df.head())
-
 
 '''
 suicidiosPorAno = df.groupby(['year','age'])['suicides_no','suicides_100k'].sum().reset_index().sort_values(by='year')
@@ -229,7 +236,7 @@ print('============================')
 #print('============================')
 #print(DF['country_year'].value_counts())
 #print('============================')
-#print(DF.info())
+
 #print('============================')
 #print(DF.head())
 #print('============================')
