@@ -3,14 +3,11 @@
 https://www.kaggle.com/russellyates88/suicide-rates-overview-1985-to-2016
 '''
 from scipy.stats import spearmanr
-from scipy.stats import pearsonr
 import scipy.stats
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.preprocessing import minmax_scale
-from sklearn.preprocessing import scale
 from sklearn import preprocessing
 from scipy import stats
 import numpy as np
@@ -198,6 +195,6 @@ plt.title('Suicidios Por Ano e Sexo no Brasil')
 plt.show()
 
 
-dfParallel = df[['year','suicides_no','population','suicides_100k','gdp_for_year','gdp_per_capita']].loc[:14]
+dfParallel = df[['year','suicides_no','population','suicides_100k','gdp_for_year','gdp_per_capita']]
 pd.plotting.parallel_coordinates(dfParallel, 'year')
 plt.show()
